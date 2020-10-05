@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
@@ -19,6 +21,11 @@ type server struct {
 }
 
 func (svc *server) handler(w http.ResponseWriter, r *http.Request) {
+	// sns times out after 15 seconds. https://docs.aws.amazon.com/sns/latest/dg/SendMessageToHttp.prepare.html
+	ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
+	defer cancel()
+	r = r.WithContext(ctx)
+
 	var err error
 	switch r.Header.Get("X-Amz-Sns-Message-Type") {
 	case "Notification":
