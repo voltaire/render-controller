@@ -74,6 +74,6 @@ func (svc *server) handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (svc *server) start() {
-	http.Handle("/", http.HandlerFunc(svc.handler))
+	http.Handle("/callback", http.HandlerFunc(svc.handler))
 	log.Fatal(http.ListenAndServe(svc.cfg.Listen, nil))
 }
