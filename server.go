@@ -5,20 +5,32 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/aws/aws-sdk-go/service/sns/snsiface"
+	"github.com/moby/moby/client"
 )
 
 type server struct {
-	sns snsiface.SNSAPI
-	cfg Config
+	docker client.APIClient
+	sns    snsiface.SNSAPI
+	cfg    Config
 }
 
 func (svc *server) handler(w http.ResponseWriter, r *http.Request) {
 	var err error
 	switch r.Header.Get("X-Amz-Sns-Message-Type") {
 	case "Notification":
+		var event events.S3Event
+		err = json.NewDecoder(r.Body).Decode(&event)
+		if err != nil {
+			log.Printf("error decoding s3 bucket event: %s", err.Error())
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
+		err = svc.handleNotification(r.Context(), event)
 	case "SubscriptionConfirmation":
 		var msg subscriptionConfirmation
 		err = json.NewDecoder(r.Body).Decode(&msg)
