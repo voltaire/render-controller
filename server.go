@@ -37,6 +37,19 @@ func (svc *server) handler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		var alreadyRunning bool
+		alreadyRunning, err = svc.checkForAlreadyRunningContainer(ctx)
+		if err != nil {
+			log.Printf("error checking for running container: %s", err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+		if alreadyRunning {
+			log.Printf("previous render container still running, skipping this run")
+			http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+			return
+		}
+
 		err = svc.handleNotification(r.Context(), event)
 	case "SubscriptionConfirmation":
 		var msg subscriptionConfirmation
@@ -66,7 +79,7 @@ func (svc *server) handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		log.Printf("error confirming subscription: %s", err.Error())
+		log.Printf("error handling message: %s", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
