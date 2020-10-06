@@ -15,7 +15,7 @@ import (
 
 func buildContainerEnv(cfg Config, backupTarballURI string) []string {
 	return []string{
-		fmt.Sprintf("AWS_DEFAULT_REGION=%s", cfg.AWSRegion),
+		fmt.Sprintf("AWS_REGION=%s", cfg.AWSRegion),
 		fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", cfg.AWSAccessKeyId),
 		fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", cfg.AWSSecretAccessKey),
 		fmt.Sprintf("OVERWORLD_DIR=%s", cfg.OverworldName),

@@ -12,7 +12,7 @@ import (
 type Config struct {
 	Listen string `default:":8080"`
 
-	AWSRegion          string `envconfig:"AWS_DEFAULT_REGION" default:"us-west-2"`
+	AWSRegion          string `envconfig:"AWS_REGION" default:"us-west-2"`
 	AWSAccessKeyId     string `envconfig:"AWS_ACCESS_KEY_ID" required:"true"`
 	AWSSecretAccessKey string `envconfig:"AWS_SECRET_ACCESS_KEY" required:"true"`
 
