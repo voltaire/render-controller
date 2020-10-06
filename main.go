@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/moby/moby/client"
@@ -16,12 +17,14 @@ type Config struct {
 	AWSAccessKeyId     string `envconfig:"AWS_ACCESS_KEY_ID" required:"true"`
 	AWSSecretAccessKey string `envconfig:"AWS_SECRET_ACCESS_KEY" required:"true"`
 
-	SourceBucketName string `default:"mc.sep.gg-backups"`
-	MapOutputURI     string `default:"s3://map.tonkat.su/"`
-	OverworldName    string `default:"pumpcraft"`
-	NetherName       string `default:"pumpcraft_nether"`
-	TheEndName       string `default:"pumpcraft_the_end"`
-	RendererImage    string `default:"voltairemc/renderer"`
+	SourceBucketName       string `default:"mc.sep.gg-backups"`
+	SourceBucketAccountId  string `default:"006851364659"`
+	SourceBucketPathPrefix string `default:"pumpcraft/"`
+	MapOutputURI           string `default:"s3://map.tonkat.su/"`
+	OverworldName          string `default:"pumpcraft"`
+	NetherName             string `default:"pumpcraft_nether"`
+	TheEndName             string `default:"pumpcraft_the_end"`
+	RendererImage          string `default:"voltairemc/renderer"`
 }
 
 func main() {
@@ -39,6 +42,7 @@ func main() {
 	server := &server{
 		cfg:    cfg,
 		sns:    sns.New(sess),
+		s3:     s3.New(sess),
 		docker: docker,
 	}
 

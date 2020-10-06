@@ -6,10 +6,13 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/aws/aws-sdk-go/service/sns/snsiface"
 	"github.com/moby/moby/client"
@@ -18,7 +21,59 @@ import (
 type server struct {
 	docker client.APIClient
 	sns    snsiface.SNSAPI
+	s3     s3iface.S3API
 	cfg    Config
+}
+
+func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
+	listed, err := svc.s3.ListObjectsV2WithContext(r.Context(), &s3.ListObjectsV2Input{
+		Bucket:              aws.String(svc.cfg.SourceBucketName),
+		ExpectedBucketOwner: aws.String(svc.cfg.SourceBucketAccountId),
+		Prefix:              aws.String(svc.cfg.SourceBucketPathPrefix),
+		RequestPayer:        aws.String("requester"),
+	})
+	if err != nil {
+		log.Printf("error listing s3 objects: %s", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	var latestObj *s3.Object
+	for _, obj := range listed.Contents {
+		if latestObj == nil {
+			latestObj = obj
+			continue
+		}
+		timestamp := aws.TimeValue(obj.LastModified)
+		if timestamp.After(aws.TimeValue(latestObj.LastModified)) {
+			latestObj = obj
+		}
+	}
+	var alreadyRunning bool
+	alreadyRunning, err = svc.checkForAlreadyRunningContainer(r.Context())
+	if err != nil {
+		log.Printf("error checking for running container: %s", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	if alreadyRunning {
+		log.Printf("previous render container still running, skipping this run")
+		http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+		return
+	}
+
+	objecturi := url.URL{
+		Scheme: "s3",
+		Host:   svc.cfg.SourceBucketName,
+		Path:   aws.StringValue(latestObj.Key),
+	}
+	err = svc.startRenderer(r.Context(), objecturi.String())
+	if err != nil {
+		log.Printf("error starting renderer: %s", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
 }
 
 func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
@@ -89,6 +144,7 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 
 func (svc *server) start() {
 	http.Handle("/callback", http.HandlerFunc(svc.handleSNSMessage))
+	http.Handle("/render_latest_map", http.HandlerFunc(svc.renderLatestMap))
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		if _, err := io.WriteString(w, "ok\n"); err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
