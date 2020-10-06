@@ -6,10 +6,8 @@ go:
 services:
 - docker
 after_success:
-- docker build -t voltairemc/render-controller:latest .
-before_deploy:
 - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-deploy:
+- docker build -t voltairemc/render-controller:latest .
 - docker push voltairemc/render-controller:latest
 env:
   global:
