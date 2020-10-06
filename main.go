@@ -24,7 +24,7 @@ type Config struct {
 	OverworldName          string `default:"pumpcraft"`
 	NetherName             string `default:"pumpcraft_nether"`
 	TheEndName             string `default:"pumpcraft_the_end"`
-	RendererImage          string `default:"voltairemc/renderer"`
+	RendererImage          string `default:"docker.io/voltairemc/renderer"`
 }
 
 func main() {
