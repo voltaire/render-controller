@@ -10,6 +10,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
+	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 )
 
@@ -61,6 +62,13 @@ func (svc *server) startRenderer(ctx context.Context, backupTarballURI string) e
 		},
 	}, &container.HostConfig{
 		AutoRemove: true,
+		Mounts: []mount.Mount{
+			{
+				Type:   mount.TypeVolume,
+				Source: "render_output",
+				Target: "/output",
+			},
+		},
 	}, &network.NetworkingConfig{}, "")
 	if err != nil {
 		return err
