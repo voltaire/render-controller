@@ -5,6 +5,8 @@ services:
         restart: unless-stopped
         init: true
         env_file: ./prod.env
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
     caddy:
         build:
             context: ./caddy
