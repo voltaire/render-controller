@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -88,5 +89,11 @@ func (svc *server) handler(w http.ResponseWriter, r *http.Request) {
 
 func (svc *server) start() {
 	http.Handle("/callback", http.HandlerFunc(svc.handler))
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		if _, err := io.WriteString(w, "ok"); err != nil {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			log.Printf("error writing healthcheck response: %s", err.Error())
+		}
+	})
 	log.Fatal(http.ListenAndServe(svc.cfg.Listen, nil))
 }
