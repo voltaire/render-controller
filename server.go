@@ -21,7 +21,7 @@ type server struct {
 	cfg    Config
 }
 
-func (svc *server) handler(w http.ResponseWriter, r *http.Request) {
+func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 	// sns times out after 15 seconds. https://docs.aws.amazon.com/sns/latest/dg/SendMessageToHttp.prepare.html
 	ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
 	defer cancel()
@@ -88,7 +88,7 @@ func (svc *server) handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (svc *server) start() {
-	http.Handle("/callback", http.HandlerFunc(svc.handler))
+	http.Handle("/callback", http.HandlerFunc(svc.handleSNSMessage))
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		if _, err := io.WriteString(w, "ok\n"); err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
