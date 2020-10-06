@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+    controller:
+        image: voltairemc/render-controller
+        restart: unless-stopped
+        init: true
+        env_file: ./prod.env
+    caddy:
+        build:
+            context: ./caddy
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - caddy_data:/data
+            - caddy_config:/config
+
+volumes:
+    caddy_data:
+    caddy_config:
