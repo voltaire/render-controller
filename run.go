@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"os"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -16,8 +15,9 @@ import (
 
 func buildContainerEnv(cfg Config, backupTarballURI string) []string {
 	return []string{
-		fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", os.Getenv("AWS_ACCESS_KEY_ID")),
-		fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", os.Getenv("AWS_SECRET_ACCESS_KEY")),
+		fmt.Sprintf("AWS_DEFAULT_REGION=%s", cfg.AWSRegion),
+		fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", cfg.AWSAccessKeyId),
+		fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", cfg.AWSSecretAccessKey),
 		fmt.Sprintf("OVERWORLD_DIR=%s", cfg.OverworldName),
 		fmt.Sprintf("NETHER_DIR=%s", cfg.NetherName),
 		fmt.Sprintf("THE_END_DIR=%s", cfg.TheEndName),
