@@ -10,7 +10,11 @@ import (
 )
 
 type Config struct {
-	Listen           string `default:":8080"`
+	Listen string `default:":8080"`
+
+	AWSAccessKeyId     string `envconfig:"AWS_ACCESS_KEY_ID" required:"true"`
+	AWSSecretAccessKey string `envconfig:"AWS_SECRET_ACCESS_KEY" required:"true"`
+
 	SourceBucketName string `default:"mc.sep.gg-backups"`
 	MapOutputURI     string `default:"s3://map.tonkat.su/"`
 	OverworldName    string `default:"pumpcraft"`
