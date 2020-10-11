@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -15,6 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/aws/aws-sdk-go/service/sns/snsiface"
+	"github.com/docker/docker/api/types"
 	"github.com/moby/moby/client"
 )
 
@@ -25,8 +27,39 @@ type server struct {
 	cfg    Config
 }
 
+func (svc *server) updateRendererImage(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
+	defer cancel()
+
+	_, err := io.Copy(ioutil.Discard, r.Body)
+	if err != nil {
+		log.Printf("error discarding body")
+	}
+	r.Body.Close()
+
+	resp, err := svc.docker.ImagePull(ctx, svc.cfg.RendererImage, types.ImagePullOptions{})
+	if err != nil {
+		return
+	}
+	defer resp.Close()
+	_, err = io.Copy(ioutil.Discard, resp)
+	if err != nil {
+		log.Printf("error discarding docker image pull response: %s", err.Error())
+	}
+	w.WriteHeader(http.StatusCreated)
+}
+
 func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
-	listed, err := svc.s3.ListObjectsV2WithContext(r.Context(), &s3.ListObjectsV2Input{
+	ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
+	defer cancel()
+
+	_, err := io.Copy(ioutil.Discard, r.Body)
+	if err != nil {
+		log.Printf("error discarding body")
+	}
+	r.Body.Close()
+
+	listed, err := svc.s3.ListObjectsV2WithContext(ctx, &s3.ListObjectsV2Input{
 		Bucket:              aws.String(svc.cfg.SourceBucketName),
 		ExpectedBucketOwner: aws.String(svc.cfg.SourceBucketAccountId),
 		Prefix:              aws.String(svc.cfg.SourceBucketPathPrefix),
@@ -50,7 +83,7 @@ func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	var alreadyRunning bool
-	alreadyRunning, err = svc.checkForAlreadyRunningContainer(r.Context())
+	alreadyRunning, err = svc.checkForAlreadyRunningContainer(ctx)
 	if err != nil {
 		log.Printf("error checking for running container: %s", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -67,7 +100,7 @@ func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
 		Host:   svc.cfg.SourceBucketName,
 		Path:   aws.StringValue(latestObj.Key),
 	}
-	err = svc.startRenderer(r.Context(), objecturi.String())
+	err = svc.startRenderer(ctx, objecturi.String())
 	if err != nil {
 		log.Printf("error starting renderer: %s", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -145,6 +178,7 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 func (svc *server) start() {
 	http.Handle("/callback", http.HandlerFunc(svc.handleSNSMessage))
 	http.Handle("/render_latest_map", http.HandlerFunc(svc.renderLatestMap))
+	http.Handle("/update_image", http.HandlerFunc(svc.updateRendererImage))
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		if _, err := io.WriteString(w, "ok\n"); err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

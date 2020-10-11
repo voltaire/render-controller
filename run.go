@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"io"
-	"io/ioutil"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -43,16 +41,6 @@ func (svc *server) checkForAlreadyRunningContainer(ctx context.Context) (bool, e
 }
 
 func (svc *server) startRenderer(ctx context.Context, backupTarballURI string) error {
-	r, err := svc.docker.ImagePull(ctx, svc.cfg.RendererImage, types.ImagePullOptions{})
-	if err != nil {
-		return err
-	}
-	defer r.Close()
-	_, err = io.Copy(ioutil.Discard, r)
-	if err != nil {
-		return err
-	}
-
 	container, err := svc.docker.ContainerCreate(ctx, &container.Config{
 		Image: svc.cfg.RendererImage,
 		Env:   buildContainerEnv(svc.cfg, backupTarballURI),
