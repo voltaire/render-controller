@@ -21,9 +21,9 @@ type Config struct {
 	SourceBucketAccountId  string `default:"006851364659"`
 	SourceBucketPathPrefix string `default:"pumpcraft/"`
 	MapOutputURI           string `envconfig:"MAP_OUTPUT_URI" default:"s3://map.tonkat.su/"`
-	OverworldName          string `default:"pumpcraft"`
-	NetherName             string `default:"pumpcraft_nether"`
-	TheEndName             string `default:"pumpcraft_the_end"`
+	OverworldName          string `envconfig:"OVERWORLD_DIR" default:"pumpcraft"`
+	NetherName             string `envconfig:"NETHER_DIR" default:"pumpcraft_nether"`
+	TheEndName             string `envconfig:"THE_END_DIR" default:"pumpcraft_the_end"`
 	RendererImage          string `default:"docker.io/voltairemc/renderer"`
 	DiscordWebhookUrl      string `envconfig:"DISCORD_WEBHOOK_URL"`
 }
