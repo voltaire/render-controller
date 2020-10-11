@@ -16,7 +16,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/aws/aws-sdk-go/service/sns/snsiface"
-	"github.com/docker/docker/api/types"
 	"github.com/moby/moby/client"
 )
 
@@ -25,28 +24,6 @@ type server struct {
 	sns    snsiface.SNSAPI
 	s3     s3iface.S3API
 	cfg    Config
-}
-
-func (svc *server) updateRendererImage(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
-	defer cancel()
-
-	_, err := io.Copy(ioutil.Discard, r.Body)
-	if err != nil {
-		log.Printf("error discarding body")
-	}
-	r.Body.Close()
-
-	resp, err := svc.docker.ImagePull(ctx, svc.cfg.RendererImage, types.ImagePullOptions{})
-	if err != nil {
-		return
-	}
-	defer resp.Close()
-	_, err = io.Copy(ioutil.Discard, resp)
-	if err != nil {
-		log.Printf("error discarding docker image pull response: %s", err.Error())
-	}
-	w.WriteHeader(http.StatusCreated)
 }
 
 func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
@@ -178,7 +155,7 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 func (svc *server) start() {
 	http.Handle("/callback", http.HandlerFunc(svc.handleSNSMessage))
 	http.Handle("/render_latest_map", http.HandlerFunc(svc.renderLatestMap))
-	http.Handle("/update_image", http.HandlerFunc(svc.updateRendererImage))
+	http.Handle("/update_image", http.HandlerFunc(svc.handleDockerHubCallback))
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		if _, err := io.WriteString(w, "ok\n"); err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
