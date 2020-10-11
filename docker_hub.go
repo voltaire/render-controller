@@ -49,9 +49,6 @@ func callbackDockerHub(w http.ResponseWriter, url string, rErr error) {
 }
 
 func (svc *server) handleDockerHubCallback(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(r.Context(), 2*time.Minute)
-	defer cancel()
-
 	var req dockerHubWebhookRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -60,22 +57,21 @@ func (svc *server) handleDockerHubCallback(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	r.Body.Close()
+	w.WriteHeader(http.StatusOK)
 
-	resp, err := svc.docker.ImagePull(ctx, svc.cfg.RendererImage, types.ImagePullOptions{})
-	if err != nil {
-		callbackDockerHub(w, req.CallbackUrl, err)
-		return
-	}
-	defer resp.Close()
-	_, err = io.Copy(ioutil.Discard, resp)
-	if err != nil {
-		log.Printf("error discarding docker image pull response: %s", err.Error())
-	}
-
-	if req.CallbackUrl == "" {
-		w.WriteHeader(http.StatusCreated)
-		return
-	}
-
-	callbackDockerHub(w, req.CallbackUrl, nil)
+	go func(callbackUrl string) {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+		defer cancel()
+		resp, err := svc.docker.ImagePull(ctx, svc.cfg.RendererImage, types.ImagePullOptions{})
+		if err != nil {
+			callbackDockerHub(w, callbackUrl, err)
+			return
+		}
+		defer resp.Close()
+		_, err = io.Copy(ioutil.Discard, resp)
+		if err != nil {
+			log.Printf("error discarding docker image pull response: %s", err.Error())
+		}
+		callbackDockerHub(w, callbackUrl, nil)
+	}(req.CallbackUrl)
 }
