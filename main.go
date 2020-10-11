@@ -20,12 +20,12 @@ type Config struct {
 	SourceBucketName       string `default:"mc.sep.gg-backups"`
 	SourceBucketAccountId  string `default:"006851364659"`
 	SourceBucketPathPrefix string `default:"pumpcraft/"`
-	MapOutputURI           string `default:"s3://map.tonkat.su/"`
+	MapOutputURI           string `envconfig:"MAP_OUTPUT_URI" default:"s3://map.tonkat.su/"`
 	OverworldName          string `default:"pumpcraft"`
 	NetherName             string `default:"pumpcraft_nether"`
 	TheEndName             string `default:"pumpcraft_the_end"`
 	RendererImage          string `default:"docker.io/voltairemc/renderer"`
-	DiscordWebhookUrl      string
+	DiscordWebhookUrl      string `envconfig:"DISCORD_WEBHOOK_URL"`
 }
 
 func main() {
