@@ -21,6 +21,7 @@ func buildContainerEnv(cfg Config, backupTarballURI string) []string {
 		fmt.Sprintf("THE_END_DIR=%s", cfg.TheEndName),
 		fmt.Sprintf("BACKUP_TARBALL_URI=%s", backupTarballURI),
 		fmt.Sprintf("MAP_OUTPUT_URI=%s", cfg.MapOutputURI),
+		fmt.Sprintf("DISCORD_WEBHOOK_URL=%s", cfg.DiscordWebhookUrl),
 	}
 }
 

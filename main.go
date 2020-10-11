@@ -25,6 +25,7 @@ type Config struct {
 	NetherName             string `default:"pumpcraft_nether"`
 	TheEndName             string `default:"pumpcraft_the_end"`
 	RendererImage          string `default:"docker.io/voltairemc/renderer"`
+	DiscordWebhookUrl      string
 }
 
 func main() {
