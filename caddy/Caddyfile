@@ -1,3 +1,8 @@
+{
+    admin off
+    email bsd@voltaire.sh
+}
+
 renderer.tonkat.su
 reverse_proxy controller:8080 {
     health_path /health
