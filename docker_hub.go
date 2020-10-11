@@ -49,7 +49,7 @@ func callbackDockerHub(w http.ResponseWriter, url string, rErr error) {
 }
 
 func (svc *server) handleDockerHubCallback(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(r.Context(), time.Minute)
 	defer cancel()
 
 	var req dockerHubWebhookRequest
