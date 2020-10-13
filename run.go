@@ -51,6 +51,13 @@ func (svc *server) startRenderer(ctx context.Context, backupTarballURI string) e
 		},
 	}, &container.HostConfig{
 		AutoRemove: true,
+		LogConfig: container.LogConfig{
+			Type: "awslogs",
+			Config: map[string]string{
+				"awslogs-group":        "renderer",
+				"awslogs-create-group": "true",
+			},
+		},
 		Mounts: []mount.Mount{
 			{
 				Type:   mount.TypeVolume,
