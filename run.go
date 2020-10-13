@@ -56,6 +56,7 @@ func (svc *server) startRenderer(ctx context.Context, backupTarballURI string) e
 			Config: map[string]string{
 				"awslogs-group":        "renderer",
 				"awslogs-create-group": "true",
+				"awslogs-region":       svc.cfg.AWSRegion,
 			},
 		},
 		Mounts: []mount.Mount{
