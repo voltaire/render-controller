@@ -21,6 +21,9 @@ func (svc *server) parseLatestObjectKey(event events.S3Event) (key string) {
 	// only render the newest event
 	var record events.S3EventRecord
 	for _, e := range event.Records {
+		if e.S3.Object.Key == "" {
+			continue
+		}
 		// ignore events not from the bucket that we care about
 		if e.S3.Bucket.Name != svc.cfg.SourceBucketName {
 			continue
