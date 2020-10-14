@@ -77,6 +77,7 @@ func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
 		Host:   svc.cfg.SourceBucketName,
 		Path:   aws.StringValue(latestObj.Key),
 	}
+	log.Println("starting render run for: " + objecturi.String())
 	err = svc.startRenderer(ctx, objecturi.String())
 	if err != nil {
 		log.Printf("error starting renderer: %s", err.Error())
