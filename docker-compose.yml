@@ -20,7 +20,7 @@ services:
         logging:
             driver: awslogs
             options:
-                awslogs-group: render-controller
+                awslogs-group: render-controller-caddy
                 awslogs-create-group: "true"
                 awslogs-region: "us-west-2"
         ports:
