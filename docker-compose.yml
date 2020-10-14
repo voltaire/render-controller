@@ -5,12 +5,24 @@ services:
         restart: unless-stopped
         init: true
         env_file: ./prod.env
+        logging:
+            driver: awslogs
+            options:
+                awslogs-group: render-controller
+                awslogs-create-group: "true"
+                awslogs-region: "us-west-2"
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
     caddy:
         build:
             context: ./caddy
         restart: unless-stopped
+        logging:
+            driver: awslogs
+            options:
+                awslogs-group: render-controller
+                awslogs-create-group: "true"
+                awslogs-region: "us-west-2"
         ports:
             - "80:80"
             - "443:443"
