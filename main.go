@@ -20,12 +20,17 @@ type Config struct {
 	SourceBucketName       string `default:"mc.sep.gg-backups"`
 	SourceBucketAccountId  string `default:"006851364659"`
 	SourceBucketPathPrefix string `default:"pumpcraft/"`
-	MapOutputURI           string `envconfig:"MAP_OUTPUT_URI" default:"s3://map.tonkat.su/"`
-	OverworldName          string `envconfig:"OVERWORLD_DIR" default:"pumpcraft"`
-	NetherName             string `envconfig:"NETHER_DIR" default:"pumpcraft_nether"`
-	TheEndName             string `envconfig:"THE_END_DIR" default:"pumpcraft_the_end"`
-	RendererImage          string `default:"docker.io/voltairemc/renderer"`
-	DiscordWebhookUrl      string `envconfig:"DISCORD_WEBHOOK_URL"`
+
+	DestinationBucketURI       string `envconfig:"DESTINATION_BUCKET_URI" default:"s3://map-tonkat-su/"`
+	DestinationBucketEndpoint  string `envconfig:"DESTINATION_BUCKET_ENDPOINT" default:"https://sfo2.digitaloceanspaces.com"`
+	DestinationAccessKeyId     string `envconfig:"DESTINATION_ACCESS_KEY_ID" required:"true"`
+	DestinationSecretAccessKey string `envconfig:"DESTINATION_SECRET_ACCESS_KEY" required:"true"`
+
+	OverworldName     string `envconfig:"OVERWORLD_DIR" default:"pumpcraft"`
+	NetherName        string `envconfig:"NETHER_DIR" default:"pumpcraft_nether"`
+	TheEndName        string `envconfig:"THE_END_DIR" default:"pumpcraft_the_end"`
+	RendererImage     string `default:"docker.io/voltairemc/renderer"`
+	DiscordWebhookUrl string `envconfig:"DISCORD_WEBHOOK_URL"`
 }
 
 func main() {

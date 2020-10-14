@@ -20,7 +20,10 @@ func buildContainerEnv(cfg Config, backupTarballURI string) []string {
 		"NETHER_DIR=" + cfg.NetherName,
 		"THE_END_DIR=" + cfg.TheEndName,
 		"BACKUP_TARBALL_URI=" + backupTarballURI,
-		"MAP_OUTPUT_URI=" + cfg.MapOutputURI,
+		"DESTINATION_BUCKET_URI=" + cfg.DestinationBucketURI,
+		"DESTINATION_BUCKET_ENDPOINT=" + cfg.DestinationBucketEndpoint,
+		"DESTINATION_ACCESS_KEY_ID=" + cfg.DestinationAccessKeyId,
+		"DESTINATION_SECRET_ACCESS_KEY=" + cfg.DestinationSecretAccessKey,
 		"DISCORD_WEBHOOK_URL=" + cfg.DiscordWebhookUrl,
 	}
 }
