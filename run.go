@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/docker/docker/api/types"
@@ -29,7 +28,7 @@ func buildContainerEnv(cfg Config, backupTarballURI string) []string {
 func (svc *server) checkForAlreadyRunningContainer(ctx context.Context) (bool, error) {
 	args := filters.NewArgs()
 	args.Add("label", "service=renderer")
-	args.Add("label", fmt.Sprintf("world=%s", svc.cfg.OverworldName))
+	args.Add("label", "world="+svc.cfg.OverworldName)
 	containers, err := svc.docker.ContainerList(ctx, types.ContainerListOptions{
 		Filters: args,
 	})
