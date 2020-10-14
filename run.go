@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -42,6 +43,7 @@ func (svc *server) checkForAlreadyRunningContainer(ctx context.Context) (bool, e
 }
 
 func (svc *server) startRenderer(ctx context.Context, backupTarballURI string) error {
+	log.Println("creating container to render '" + backupTarballURI + "'")
 	container, err := svc.docker.ContainerCreate(ctx, &container.Config{
 		Image: svc.cfg.RendererImage,
 		Env:   buildContainerEnv(svc.cfg, backupTarballURI),
@@ -71,5 +73,6 @@ func (svc *server) startRenderer(ctx context.Context, backupTarballURI string) e
 		return err
 	}
 
+	log.Println("starting container id '" + container.ID + "'")
 	return svc.docker.ContainerStart(ctx, container.ID, types.ContainerStartOptions{})
 }

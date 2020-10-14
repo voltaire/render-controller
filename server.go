@@ -32,7 +32,7 @@ func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
 
 	_, err := io.Copy(ioutil.Discard, r.Body)
 	if err != nil {
-		log.Printf("error discarding body")
+		log.Println("error discarding body")
 	}
 	r.Body.Close()
 
@@ -67,7 +67,7 @@ func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if alreadyRunning {
-		log.Printf("previous render container still running, skipping this run")
+		log.Println("previous render container still running, skipping this run")
 		http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
 		return
 	}
@@ -111,7 +111,7 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if alreadyRunning {
-			log.Printf("previous render container still running, skipping this run")
+			log.Println("previous render container still running, skipping this run")
 			http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
 			return
 		}
