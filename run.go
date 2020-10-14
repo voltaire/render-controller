@@ -13,15 +13,15 @@ import (
 
 func buildContainerEnv(cfg Config, backupTarballURI string) []string {
 	return []string{
-		fmt.Sprintf("AWS_REGION=%s", cfg.AWSRegion),
-		fmt.Sprintf("AWS_ACCESS_KEY_ID=%s", cfg.AWSAccessKeyId),
-		fmt.Sprintf("AWS_SECRET_ACCESS_KEY=%s", cfg.AWSSecretAccessKey),
-		fmt.Sprintf("OVERWORLD_DIR=%s", cfg.OverworldName),
-		fmt.Sprintf("NETHER_DIR=%s", cfg.NetherName),
-		fmt.Sprintf("THE_END_DIR=%s", cfg.TheEndName),
-		fmt.Sprintf("BACKUP_TARBALL_URI=%s", backupTarballURI),
-		fmt.Sprintf("MAP_OUTPUT_URI=%s", cfg.MapOutputURI),
-		fmt.Sprintf("DISCORD_WEBHOOK_URL=%s", cfg.DiscordWebhookUrl),
+		"AWS_REGION=" + cfg.AWSRegion,
+		"AWS_ACCESS_KEY_ID=" + cfg.AWSAccessKeyId,
+		"AWS_SECRET_ACCESS_KEY=" + cfg.AWSSecretAccessKey,
+		"OVERWORLD_DIR=" + cfg.OverworldName,
+		"NETHER_DIR=" + cfg.NetherName,
+		"THE_END_DIR=" + cfg.TheEndName,
+		"BACKUP_TARBALL_URI=" + backupTarballURI,
+		"MAP_OUTPUT_URI=" + cfg.MapOutputURI,
+		"DISCORD_WEBHOOK_URL=" + cfg.DiscordWebhookUrl,
 	}
 }
 
