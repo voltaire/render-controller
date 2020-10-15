@@ -22,9 +22,9 @@ type Config struct {
 	SourceBucketPathPrefix string `default:"pumpcraft/"`
 
 	DestinationBucketURI       string `envconfig:"DESTINATION_BUCKET_URI" default:"s3://map-tonkat-su/"`
-	DestinationBucketEndpoint  string `envconfig:"DESTINATION_BUCKET_ENDPOINT" default:"https://sfo2.digitaloceanspaces.com"`
-	DestinationAccessKeyId     string `envconfig:"DESTINATION_ACCESS_KEY_ID" required:"true"`
-	DestinationSecretAccessKey string `envconfig:"DESTINATION_SECRET_ACCESS_KEY" required:"true"`
+	DestinationBucketEndpoint  string `envconfig:"DESTINATION_BUCKET_ENDPOINT"`
+	DestinationAccessKeyId     string `envconfig:"DESTINATION_ACCESS_KEY_ID"`
+	DestinationSecretAccessKey string `envconfig:"DESTINATION_SECRET_ACCESS_KEY"`
 
 	OverworldName     string `envconfig:"OVERWORLD_DIR" default:"pumpcraft"`
 	NetherName        string `envconfig:"NETHER_DIR" default:"pumpcraft_nether"`

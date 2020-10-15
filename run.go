@@ -12,7 +12,7 @@ import (
 )
 
 func buildContainerEnv(cfg Config, backupTarballURI string) []string {
-	return []string{
+	env := []string{
 		"AWS_REGION=" + cfg.AWSRegion,
 		"AWS_ACCESS_KEY_ID=" + cfg.AWSAccessKeyId,
 		"AWS_SECRET_ACCESS_KEY=" + cfg.AWSSecretAccessKey,
@@ -22,10 +22,21 @@ func buildContainerEnv(cfg Config, backupTarballURI string) []string {
 		"BACKUP_TARBALL_URI=" + backupTarballURI,
 		"DESTINATION_BUCKET_URI=" + cfg.DestinationBucketURI,
 		"DESTINATION_BUCKET_ENDPOINT=" + cfg.DestinationBucketEndpoint,
-		"DESTINATION_ACCESS_KEY_ID=" + cfg.DestinationAccessKeyId,
-		"DESTINATION_SECRET_ACCESS_KEY=" + cfg.DestinationSecretAccessKey,
 		"DISCORD_WEBHOOK_URL=" + cfg.DiscordWebhookUrl,
 	}
+	destAccessKeyId := cfg.DestinationAccessKeyId
+	if cfg.DestinationAccessKeyId == "" {
+		destAccessKeyId = cfg.AWSAccessKeyId
+	}
+
+	destSecretAccessKey := cfg.DestinationSecretAccessKey
+	if cfg.DestinationSecretAccessKey == "" {
+		destSecretAccessKey = cfg.AWSSecretAccessKey
+	}
+
+	env = append(env, "DESTINATION_ACCESS_KEY_ID="+destAccessKeyId)
+	env = append(env, "DESTINATION_SECRET_ACCESS_KEY="+destSecretAccessKey)
+	return env
 }
 
 func (svc *server) checkForAlreadyRunningContainer(ctx context.Context) (bool, error) {
