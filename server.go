@@ -92,12 +92,19 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
 	defer cancel()
 	r = r.WithContext(ctx)
+	defer r.Body.Close()
+	bs, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Printf("error reading sns message: %s", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	}
 
-	var err error
+	log.Println(string(bs))
+
 	switch r.Header.Get("X-Amz-Sns-Message-Type") {
 	case "Notification":
 		var event events.S3Event
-		err = json.NewDecoder(r.Body).Decode(&event)
+		err = json.Unmarshal(bs, &event)
 		if err != nil {
 			log.Printf("error decoding s3 bucket event: %s", err.Error())
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -120,7 +127,7 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 		err = svc.handleNotification(r.Context(), event)
 	case "SubscriptionConfirmation":
 		var msg subscriptionConfirmation
-		err = json.NewDecoder(r.Body).Decode(&msg)
+		err = json.Unmarshal(bs, &msg)
 		if err != nil {
 			log.Printf("error decoding subscription confirmation request: %s", err.Error())
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -134,7 +141,7 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 		})
 	case "UnsubscribeConfirmation":
 		var msg subscriptionConfirmation
-		err = json.NewDecoder(r.Body).Decode(&msg)
+		err = json.Unmarshal(bs, &msg)
 		if err != nil {
 			log.Printf("error decoding unsubscribe confirmation request: %s", err.Error())
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
