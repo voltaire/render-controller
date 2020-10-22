@@ -2,13 +2,19 @@ package main
 
 import (
 	"context"
+	"errors"
+	"log"
 	"net/url"
 
 	"github.com/aws/aws-lambda-go/events"
 )
 
 func (svc *server) handleNotification(ctx context.Context, event events.S3Event) error {
-	key := svc.parseLatestObjectKey(event)
+	key, err := svc.parseLatestObjectKey(event)
+	if err != nil {
+		return err
+	}
+
 	objecturi := url.URL{
 		Scheme: "s3",
 		Host:   svc.cfg.SourceBucketName,
@@ -17,15 +23,17 @@ func (svc *server) handleNotification(ctx context.Context, event events.S3Event)
 	return svc.startRenderer(ctx, objecturi.String())
 }
 
-func (svc *server) parseLatestObjectKey(event events.S3Event) (key string) {
+func (svc *server) parseLatestObjectKey(event events.S3Event) (key string, err error) {
 	// only render the newest event
 	var record events.S3EventRecord
 	for _, e := range event.Records {
 		if e.S3.Object.Key == "" {
+			log.Println("empty event key, skipping")
 			continue
 		}
 		// ignore events not from the bucket that we care about
 		if e.S3.Bucket.Name != svc.cfg.SourceBucketName {
+			log.Printf("event specifies bucket '%s', expected '%s'", e.S3.Bucket.Name, svc.cfg.SourceBucketName)
 			continue
 		}
 		if e.EventTime.After(record.EventTime) {
@@ -33,5 +41,9 @@ func (svc *server) parseLatestObjectKey(event events.S3Event) (key string) {
 		}
 	}
 
-	return record.S3.Object.Key
+	if record.S3.Object.Key == "" {
+		return "", errors.New("unable to parse object key from event")
+	}
+
+	return record.S3.Object.Key, nil
 }

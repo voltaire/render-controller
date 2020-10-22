@@ -99,8 +99,6 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
 
-	log.Println(string(bs))
-
 	switch r.Header.Get("X-Amz-Sns-Message-Type") {
 	case "Notification":
 		var event events.S3Event
