@@ -101,7 +101,7 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Header.Get("X-Amz-Sns-Message-Type") {
 	case "Notification":
-		var event events.S3Event
+		var event events.SNSEntity
 		err = json.Unmarshal(bs, &event)
 		if err != nil {
 			log.Printf("error decoding s3 bucket event: %s", err.Error())

@@ -2,16 +2,21 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log"
 	"net/url"
-	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func (svc *server) handleNotification(ctx context.Context, event events.S3Event) error {
-	key, err := svc.parseLatestObjectKey(event)
+func (svc *server) handleNotification(ctx context.Context, event events.SNSEntity) error {
+	s3Event, err := extractS3Event(event)
+	if err != nil {
+		return err
+	}
+
+	key, err := parseLatestObjectKey(s3Event, svc.cfg.SourceBucketName)
 	if err != nil {
 		return err
 	}
@@ -24,7 +29,13 @@ func (svc *server) handleNotification(ctx context.Context, event events.S3Event)
 	return svc.startRenderer(ctx, objecturi.String())
 }
 
-func (svc *server) parseLatestObjectKey(event events.S3Event) (key string, err error) {
+func extractS3Event(event events.SNSEntity) (events.S3Event, error) {
+	var s3Event events.S3Event
+	err := json.Unmarshal([]byte(event.Message), &s3Event)
+	return s3Event, err
+}
+
+func parseLatestObjectKey(event events.S3Event, sourceBucketName string) (key string, err error) {
 	// only render the newest event
 	var record events.S3EventRecord
 	for _, e := range event.Records {
@@ -34,12 +45,11 @@ func (svc *server) parseLatestObjectKey(event events.S3Event) (key string, err e
 		}
 
 		// ignore events not from the bucket that we care about
-		if e.S3.Bucket.Name != svc.cfg.SourceBucketName {
-			log.Printf("event specifies bucket '%s', expected '%s'", e.S3.Bucket.Name, svc.cfg.SourceBucketName)
+		if e.S3.Bucket.Name != sourceBucketName {
+			log.Printf("event specifies bucket '%s', expected '%s'", e.S3.Bucket.Name, sourceBucketName)
 			continue
 		}
 
-		log.Printf("held event time: %s, new event time: %s", record.EventTime.Format(time.RFC3339), e.EventTime.Format(time.RFC3339))
 		if e.EventTime.After(record.EventTime) {
 			record = e
 		}
