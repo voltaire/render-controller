@@ -1,7 +1,7 @@
 version: "3.8"
 services:
     controller:
-        image: voltairemc/render-controller
+        image: ghcr.io/voltaire/render-controller:latest
         restart: unless-stopped
         init: true
         env_file: ./prod.env
