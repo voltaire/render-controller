@@ -6,6 +6,7 @@ import (
 	"errors"
 	"log"
 	"net/url"
+	"path/filepath"
 
 	"github.com/aws/aws-lambda-go/events"
 )
@@ -16,7 +17,7 @@ func (svc *server) handleNotification(ctx context.Context, event events.SNSEntit
 		return err
 	}
 
-	key, err := parseLatestObjectKey(s3Event, svc.cfg.SourceBucketName)
+	record, err := parseLatestObject(s3Event, svc.cfg.SourceBucketName)
 	if err != nil {
 		return err
 	}
@@ -24,7 +25,7 @@ func (svc *server) handleNotification(ctx context.Context, event events.SNSEntit
 	objecturi := url.URL{
 		Scheme: "s3",
 		Host:   svc.cfg.SourceBucketName,
-		Path:   key,
+		Path:   record.key,
 	}
 	return svc.startRenderer(ctx, objecturi.String())
 }
@@ -35,7 +36,12 @@ func extractS3Event(event events.SNSEntity) (events.S3Event, error) {
 	return s3Event, err
 }
 
-func parseLatestObjectKey(event events.S3Event, sourceBucketName string) (key string, err error) {
+type eventRecord struct {
+	partition string
+	key       string
+}
+
+func parseLatestObject(event events.S3Event, sourceBucketName string) (*eventRecord, error) {
 	// only render the newest event
 	var record events.S3EventRecord
 	for _, e := range event.Records {
@@ -55,9 +61,15 @@ func parseLatestObjectKey(event events.S3Event, sourceBucketName string) (key st
 		}
 	}
 
-	if record.S3.Object.Key == "" {
-		return "", errors.New("unable to parse object key from event")
-	}
+	return parseEventRecordFromObjectKey(record.S3.Object.Key)
+}
 
-	return record.S3.Object.Key, nil
+func parseEventRecordFromObjectKey(key string) (*eventRecord, error) {
+	if key == "" {
+		return nil, errors.New("received empty event object key")
+	}
+	return &eventRecord{
+		partition: filepath.Dir(key),
+		key:       key,
+	}, nil
 }
