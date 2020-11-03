@@ -13,4 +13,5 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/moby/moby v1.13.1
 	github.com/opencontainers/go-digest v1.0.0 // indirect
+	github.com/stretchr/testify v1.6.1
 )

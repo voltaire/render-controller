@@ -17,15 +17,19 @@ func (svc *server) handleNotification(ctx context.Context, event events.SNSEntit
 		return err
 	}
 
-	record, err := parseLatestObject(s3Event, svc.cfg.SourceBucketName)
+	key, err := parseLatestObject(s3Event, svc.cfg.SourceBucketName)
 	if err != nil {
 		return err
+	}
+
+	if !filepath.HasPrefix(key, svc.cfg.SourceBucketPathPrefix) {
+		return errors.New("received notification for the wrong path prefix")
 	}
 
 	objecturi := url.URL{
 		Scheme: "s3",
 		Host:   svc.cfg.SourceBucketName,
-		Path:   record.key,
+		Path:   key,
 	}
 	return svc.startRenderer(ctx, objecturi.String())
 }
@@ -36,12 +40,7 @@ func extractS3Event(event events.SNSEntity) (events.S3Event, error) {
 	return s3Event, err
 }
 
-type eventRecord struct {
-	partition string
-	key       string
-}
-
-func parseLatestObject(event events.S3Event, sourceBucketName string) (*eventRecord, error) {
+func parseLatestObject(event events.S3Event, sourceBucketName string) (string, error) {
 	// only render the newest event
 	var record events.S3EventRecord
 	for _, e := range event.Records {
@@ -61,15 +60,10 @@ func parseLatestObject(event events.S3Event, sourceBucketName string) (*eventRec
 		}
 	}
 
-	return parseEventRecordFromObjectKey(record.S3.Object.Key)
-}
-
-func parseEventRecordFromObjectKey(key string) (*eventRecord, error) {
+	key := record.S3.Object.Key
 	if key == "" {
-		return nil, errors.New("received empty event object key")
+		return "", errors.New("received empty event object key")
 	}
-	return &eventRecord{
-		partition: filepath.Dir(key),
-		key:       key,
-	}, nil
+
+	return key, nil
 }

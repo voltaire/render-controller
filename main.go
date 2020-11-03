@@ -19,7 +19,7 @@ type Config struct {
 
 	SourceBucketName       string `default:"mc.sep.gg-backups"`
 	SourceBucketAccountId  string `default:"006851364659"`
-	SourceBucketPathPrefix string `default:"pumpcraft/"`
+	SourceBucketPathPrefix string `default:"newworld"`
 
 	DestinationBucketURI       string `envconfig:"DESTINATION_BUCKET_URI" default:"s3://map-tonkat-su/"`
 	DestinationBucketEndpoint  string `envconfig:"DESTINATION_BUCKET_ENDPOINT"`
