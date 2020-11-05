@@ -9,4 +9,5 @@ service UpdateDockerImage {
 
 message UpdateImageReq {
     string image = 1;
+    bytes signature = 2;
 }

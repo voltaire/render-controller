@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/ed25519"
 	"encoding/json"
 	"io"
 	"io/ioutil"
@@ -25,6 +26,8 @@ type server struct {
 	sns    snsiface.SNSAPI
 	s3     s3iface.S3API
 	cfg    Config
+
+	githubActionsPublicKey ed25519.PublicKey
 }
 
 func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {

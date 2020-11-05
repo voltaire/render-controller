@@ -6,8 +6,8 @@ github.com/aws/aws-lambda-go v1.19.1 h1:5iUHbIZ2sG6Yq/J1IN3sWm3+vAB1CWwhI21NffLN
 github.com/aws/aws-lambda-go v1.19.1/go.mod h1:jJmlefzPfGnckuHdXX7/80O3BvUUi12XOkbv4w9SGLU=
 github.com/aws/aws-sdk-go v1.35.14 h1:nucVVXXjAr9UkmYCBWxQWRuYa5KOlaXjuJGg2ulW0K0=
 github.com/aws/aws-sdk-go v1.35.14/go.mod h1:tlPOdRjfxPBpNIwqDj61rmsnA85v9jc0Ps9+muhnW+k=
-github.com/bsdlp/update-docker-image v0.0.0-20201105054545-47e8da7c4229 h1:y3dl5AoUUMDXTkjI786dsJ0R8F01A7or2K9CT+ANLt8=
-github.com/bsdlp/update-docker-image v0.0.0-20201105054545-47e8da7c4229/go.mod h1:cB0+VtSgsJqojkNoxWYe7BWvTkYUy8wgfUrXTiIuB3M=
+github.com/bsdlp/update-docker-image v0.0.0-20201105194904-dc5383aa0f2c h1:AExzS3begnJb/M4VqgFmjL5tZmJaqA7/m63au4CQw+g=
+github.com/bsdlp/update-docker-image v0.0.0-20201105194904-dc5383aa0f2c/go.mod h1:cB0+VtSgsJqojkNoxWYe7BWvTkYUy8wgfUrXTiIuB3M=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=

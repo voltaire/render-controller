@@ -36,7 +36,8 @@ jobs:
                     tags: ghcr.io/${{ github.repository }}:latest
             -
                 name: notify renderer
-                uses: bsdlp/notify-docker-pull@529bf5bc179dde21d7821127bc31e482a988e55f
+                uses: bsdlp/notify-docker-pull@34767059efa90abbaf8cd04d68a3ea79be10857e
                 with:
                     server_url: "https://renderer.tonkat.su"
                     image: ghcr.io/${{ github.repository }}:latest
+                    private_key: ${{ secrets.UPDATE_DOCKER_IMAGE_PRIVATE_KEY }}

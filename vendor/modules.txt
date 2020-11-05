@@ -54,7 +54,7 @@ github.com/aws/aws-sdk-go/service/sns
 github.com/aws/aws-sdk-go/service/sns/snsiface
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
-# github.com/bsdlp/update-docker-image v0.0.0-20201105054545-47e8da7c4229
+# github.com/bsdlp/update-docker-image v0.0.0-20201105194904-dc5383aa0f2c
 ## explicit
 github.com/bsdlp/update-docker-image
 # github.com/davecgh/go-spew v1.1.1
@@ -89,6 +89,7 @@ github.com/docker/go-connections/tlsconfig
 ## explicit
 github.com/docker/go-units
 # github.com/golang/protobuf v1.4.3
+## explicit
 github.com/golang/protobuf/jsonpb
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes/empty

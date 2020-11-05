@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/ed25519"
 	"io"
 	"io/ioutil"
 	"log"
@@ -10,9 +11,14 @@ import (
 	update_docker_image "github.com/bsdlp/update-docker-image"
 	"github.com/docker/docker/api/types"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/twitchtv/twirp"
 )
 
 func (svc *server) UpdateImage(ctx context.Context, req *update_docker_image.UpdateImageReq) (_ *empty.Empty, err error) {
+	if !ed25519.Verify(svc.githubActionsPublicKey, []byte(req.GetImage()), req.GetSignature()) {
+		return nil, twirp.NewError(twirp.Unauthenticated, "invalid signature")
+	}
+
 	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 		defer cancel()

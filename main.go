@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/ed25519"
+	"encoding/base64"
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -31,6 +33,16 @@ type Config struct {
 	TheEndName        string `envconfig:"THE_END_DIR" default:"pumpcraft_the_end"`
 	RendererImage     string `default:"ghcr.io/voltaire/renderer:latest"`
 	DiscordWebhookUrl string `envconfig:"DISCORD_WEBHOOK_URL"`
+
+	GithubActionsPublicKey string `split_words:"true" required:"true"`
+}
+
+func decodePublicKey(encoded string) (key ed25519.PublicKey, err error) {
+	data, err := base64.StdEncoding.DecodeString(encoded)
+	if err != nil {
+		return nil, err
+	}
+	return ed25519.PublicKey(data), nil
 }
 
 func main() {
@@ -40,16 +52,22 @@ func main() {
 		log.Fatal(err)
 	}
 
+	githubActionsPublicKey, err := decodePublicKey(cfg.GithubActionsPublicKey)
+	if err != nil {
+		log.Fatalf("error decoding github actions public key: %s", err.Error())
+	}
+
 	docker, err := client.NewEnvClient()
 	if err != nil {
 		log.Fatalf("error setting up docker client: %s", err.Error())
 	}
 	sess := session.Must(session.NewSession())
 	server := &server{
-		cfg:    cfg,
-		sns:    sns.New(sess),
-		s3:     s3.New(sess),
-		docker: docker,
+		cfg:                    cfg,
+		sns:                    sns.New(sess),
+		s3:                     s3.New(sess),
+		docker:                 docker,
+		githubActionsPublicKey: githubActionsPublicKey,
 	}
 
 	server.start()
