@@ -29,7 +29,7 @@ type Config struct {
 	OverworldName     string `envconfig:"OVERWORLD_DIR" default:"pumpcraft"`
 	NetherName        string `envconfig:"NETHER_DIR" default:"pumpcraft_nether"`
 	TheEndName        string `envconfig:"THE_END_DIR" default:"pumpcraft_the_end"`
-	RendererImage     string `default:"docker.io/voltairemc/renderer"`
+	RendererImage     string `default:"ghcr.io/voltaire/renderer:latest"`
 	DiscordWebhookUrl string `envconfig:"DISCORD_WEBHOOK_URL"`
 }
 
