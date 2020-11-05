@@ -15,24 +15,24 @@ import (
 type Config struct {
 	Listen string `default:":8080"`
 
-	AWSRegion          string `envconfig:"AWS_REGION" default:"us-west-2"`
-	AWSAccessKeyId     string `envconfig:"AWS_ACCESS_KEY_ID" required:"true"`
-	AWSSecretAccessKey string `envconfig:"AWS_SECRET_ACCESS_KEY" required:"true"`
+	AWSRegion          string `split_words:"true" default:"us-west-2"`
+	AWSAccessKeyId     string `split_words:"true" required:"true"`
+	AWSSecretAccessKey string `split_words:"true" required:"true"`
 
 	SourceBucketName       string `default:"mc.sep.gg-backups"`
 	SourceBucketAccountId  string `default:"006851364659"`
 	SourceBucketPathPrefix string `default:"newworld"`
 
-	DestinationBucketURI       string `envconfig:"DESTINATION_BUCKET_URI" default:"s3://map-tonkat-su/"`
-	DestinationBucketEndpoint  string `envconfig:"DESTINATION_BUCKET_ENDPOINT"`
-	DestinationAccessKeyId     string `envconfig:"DESTINATION_ACCESS_KEY_ID"`
-	DestinationSecretAccessKey string `envconfig:"DESTINATION_SECRET_ACCESS_KEY"`
+	DestinationBucketURI       string `split_words:"true" default:"s3://map-tonkat-su/"`
+	DestinationBucketEndpoint  string `split_words:"true"`
+	DestinationAccessKeyId     string `split_words:"true"`
+	DestinationSecretAccessKey string `split_words:"true"`
 
 	OverworldName     string `envconfig:"OVERWORLD_DIR" default:"pumpcraft"`
 	NetherName        string `envconfig:"NETHER_DIR" default:"pumpcraft_nether"`
 	TheEndName        string `envconfig:"THE_END_DIR" default:"pumpcraft_the_end"`
 	RendererImage     string `default:"ghcr.io/voltaire/renderer:latest"`
-	DiscordWebhookUrl string `envconfig:"DISCORD_WEBHOOK_URL"`
+	DiscordWebhookUrl string `split_words:"true"`
 
 	GithubActionsPublicKey string `split_words:"true" required:"true"`
 }
