@@ -16,6 +16,9 @@ jobs:
                 name: checkout code
                 uses: actions/checkout@v2
             -
+                name: test
+                run: go test -v -race ./...
+            -
                 name: setup qemu
                 uses: docker/setup-qemu-action@v1
             -
