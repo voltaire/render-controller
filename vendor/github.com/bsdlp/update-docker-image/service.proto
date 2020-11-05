@@ -1,0 +1,12 @@
+syntax = "proto3";
+package twitch.twirp.example.helloworld;
+option go_package = "update_docker_image";
+import "google/protobuf/empty.proto";
+
+service UpdateDockerImage {
+    rpc UpdateImage(UpdateImageReq) returns (google.protobuf.Empty);
+}
+
+message UpdateImageReq {
+    string image = 1;
+}

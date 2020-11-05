@@ -16,6 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/aws/aws-sdk-go/service/sns/snsiface"
+	update_docker_image "github.com/bsdlp/update-docker-image"
 	"github.com/moby/moby/client"
 )
 
@@ -159,14 +160,16 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (svc *server) start() {
-	http.Handle("/callback", http.HandlerFunc(svc.handleSNSMessage))
-	http.Handle("/render_latest_map", http.HandlerFunc(svc.renderLatestMap))
-	http.Handle("/update_image", http.HandlerFunc(svc.handleDockerHubCallback))
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+	updateImageHandler := update_docker_image.NewUpdateDockerImageServer(svc)
+	mux.Handle(updateImageHandler.PathPrefix(), updateImageHandler)
+	mux.Handle("/callback", http.HandlerFunc(svc.handleSNSMessage))
+	mux.Handle("/render_latest_map", http.HandlerFunc(svc.renderLatestMap))
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		if _, err := io.WriteString(w, "ok\n"); err != nil {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			log.Printf("error writing healthcheck response: %s", err.Error())
 		}
 	})
-	log.Fatal(http.ListenAndServe(svc.cfg.Listen, nil))
+	log.Fatal(http.ListenAndServe(svc.cfg.Listen, mux))
 }
