@@ -18,7 +18,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/aws/aws-sdk-go/service/sns/snsiface"
 	update_docker_image "github.com/bsdlp/update-docker-image"
-	"github.com/moby/moby/client"
+	"github.com/docker/docker/client"
 )
 
 type server struct {

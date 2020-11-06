@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/sns"
+	"github.com/docker/docker/client"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/moby/moby/client"
 )
 
 type Config struct {
