@@ -34,6 +34,8 @@ type Config struct {
 	RendererImage     string `default:"ghcr.io/voltaire/renderer:latest"`
 	DiscordWebhookUrl string `split_words:"true"`
 
+	RunnerName string `split_words:"true" default:"renderer"`
+
 	GithubActionsPublicKey string `split_words:"true" required:"true"`
 }
 

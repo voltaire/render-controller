@@ -25,6 +25,7 @@ func buildContainerEnv(cfg Config, backupTarballURI string) []string {
 		"DESTINATION_ACCESS_KEY_ID=" + cfg.DestinationAccessKeyId,
 		"DESTINATION_SECRET_ACCESS_KEY=" + cfg.DestinationSecretAccessKey,
 		"DISCORD_WEBHOOK_URL=" + cfg.DiscordWebhookUrl,
+		"RUNNER_NAME=" + cfg.RunnerName,
 	}
 }
 
