@@ -59,7 +59,7 @@ func main() {
 		log.Fatalf("error decoding github actions public key: %s", err.Error())
 	}
 
-	docker, err := client.NewEnvClient()
+	docker, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		log.Fatalf("error setting up docker client: %s", err.Error())
 	}
