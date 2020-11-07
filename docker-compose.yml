@@ -1,35 +1,46 @@
 version: "3.8"
 services:
-    controller:
-        image: ghcr.io/voltaire/render-controller:latest
-        restart: unless-stopped
-        init: true
-        env_file: ./prod.env
-        logging:
-            driver: awslogs
-            options:
-                awslogs-group: render-controller
-                awslogs-create-group: "true"
-                awslogs-region: "us-west-2"
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
-    caddy:
-        build:
-            context: ./caddy
-        restart: unless-stopped
-        logging:
-            driver: awslogs
-            options:
-                awslogs-group: render-controller-caddy
-                awslogs-create-group: "true"
-                awslogs-region: "us-west-2"
-        ports:
-            - "80:80"
-            - "443:443"
-        volumes:
-            - caddy_data:/data
-            - caddy_config:/config
+  controller:
+    image: ghcr.io/voltaire/render-controller:latest
+    restart: unless-stopped
+    init: true
+    env_file: ./prod.env
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: render-controller
+        awslogs-create-group: "true"
+        awslogs-region: "us-west-2"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  controller-redis:
+    image: redis:6-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - type: volume
+        source: redis_data
+        target: /data
+        volume:
+          nocopy: true
+  caddy:
+    build:
+      context: ./caddy
+    restart: unless-stopped
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: render-controller-caddy
+        awslogs-create-group: "true"
+        awslogs-region: "us-west-2"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
 
 volumes:
-    caddy_data:
-    caddy_config:
+  caddy_data:
+  caddy_config:
+  redis_data:
