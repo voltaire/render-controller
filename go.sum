@@ -8,6 +8,8 @@ github.com/aws/aws-lambda-go v1.20.0 h1:ZSweJx/Hy9BoIDXKBEh16vbHH0t0dehnF8MKpMiO
 github.com/aws/aws-lambda-go v1.20.0/go.mod h1:jJmlefzPfGnckuHdXX7/80O3BvUUi12XOkbv4w9SGLU=
 github.com/aws/aws-sdk-go v1.35.23 h1:SCP0d0XvyJTDmfnHEQPvBaYi3kea1VNUo7uQmkVgFts=
 github.com/aws/aws-sdk-go v1.35.23/go.mod h1:tlPOdRjfxPBpNIwqDj61rmsnA85v9jc0Ps9+muhnW+k=
+github.com/bsdlp/machine v0.7.1-0.20201107012020-2944d6dc3244 h1:VffkkWCxw3c+mgScY/u0rOy6Sy2+YKPq7hQmmUsOVlk=
+github.com/bsdlp/machine v0.7.1-0.20201107012020-2944d6dc3244/go.mod h1:xXq7BaJLBH/tyV2swzNyB6SAVDZ4gZLXZQ/MYB1d81Y=
 github.com/bsdlp/update-docker-image v0.0.0-20201105200224-b35146985022 h1:jofCm1GSjdLgUwjU9SgFKBgdbk2TyrjBh2c+msz9TkQ=
 github.com/bsdlp/update-docker-image v0.0.0-20201105200224-b35146985022/go.mod h1:cB0+VtSgsJqojkNoxWYe7BWvTkYUy8wgfUrXTiIuB3M=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
@@ -91,6 +93,7 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/twitchtv/twirp v7.1.0+incompatible h1:3fNSDoSPyq+fTrifIvGue9XM/tptzuhiGY83rxPVNUg=
 github.com/twitchtv/twirp v7.1.0+incompatible/go.mod h1:RRJoFSAmTEh2weEqWtpPE3vFK5YBhA6bqp2l1kfCC5A=
 github.com/urfave/cli/v2 v2.2.0/go.mod h1:SE9GqnLQmjVa0iPEY0f1w3ygNIYcIJ0OKPMoW2caLfQ=
+golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2 h1:VklqNMn3ovrHsnt90PveolxSbWFaJdECFbxSq0Mqo2M=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
