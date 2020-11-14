@@ -2,6 +2,8 @@ version: "3.8"
 services:
   controller:
     image: ghcr.io/voltaire/render-controller:latest
+    depends_on:
+      - controller-redis
     restart: unless-stopped
     init: true
     env_file: ./prod.env
@@ -26,6 +28,8 @@ services:
   caddy:
     build:
       context: ./caddy
+    depends_on:
+      - controller
     restart: unless-stopped
     logging:
       driver: awslogs
