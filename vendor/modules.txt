@@ -1,9 +1,7 @@
 # github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78
-## explicit
 github.com/Azure/go-ansiterm
 github.com/Azure/go-ansiterm/winterm
 # github.com/Microsoft/go-winio v0.4.15
-## explicit
 github.com/Microsoft/go-winio
 github.com/Microsoft/go-winio/pkg/guid
 # github.com/aws/aws-lambda-go v1.20.0
@@ -62,12 +60,10 @@ github.com/aws/aws-sdk-go/service/sts/stsiface
 ## explicit
 github.com/bsdlp/update-docker-image
 # github.com/containerd/containerd v1.4.1
-## explicit
 github.com/containerd/containerd/errdefs
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
 # github.com/docker/distribution v2.7.1+incompatible
-## explicit
 github.com/docker/distribution/digestset
 github.com/docker/distribution/reference
 github.com/docker/distribution/registry/api/errcode
@@ -94,14 +90,13 @@ github.com/docker/docker/errdefs
 github.com/docker/docker/pkg/term
 github.com/docker/docker/pkg/term/windows
 # github.com/docker/go-connections v0.4.0
-## explicit
 github.com/docker/go-connections/nat
 github.com/docker/go-connections/sockets
 github.com/docker/go-connections/tlsconfig
 # github.com/docker/go-units v0.4.0
 ## explicit
 github.com/docker/go-units
-# github.com/docker/machine v0.16.2 => github.com/bsdlp/machine v0.7.1-0.20201107012020-2944d6dc3244
+# github.com/docker/machine v0.16.2 => github.com/bsdlp/machine v0.7.1-0.20201114195251-29ab5be05b0c
 ## explicit
 github.com/docker/machine/commands/mcndirs
 github.com/docker/machine/drivers/errdriver
@@ -131,7 +126,6 @@ github.com/docker/machine/libmachine/version
 github.com/docker/machine/libmachine/versioncmp
 github.com/docker/machine/version
 # github.com/gogo/protobuf v1.3.1
-## explicit
 github.com/gogo/protobuf/proto
 # github.com/golang/protobuf v1.4.3
 ## explicit
@@ -142,22 +136,14 @@ github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/empty
 github.com/golang/protobuf/ptypes/timestamp
-# github.com/gorilla/mux v1.8.0
-## explicit
-# github.com/gotestyourself/gotestyourself v1.4.0
-## explicit
 # github.com/jmespath/go-jmespath v0.4.0
 github.com/jmespath/go-jmespath
 # github.com/kelseyhightower/envconfig v1.4.0
 ## explicit
 github.com/kelseyhightower/envconfig
-# github.com/morikuni/aec v1.0.0
-## explicit
 # github.com/opencontainers/go-digest v1.0.0
-## explicit
 github.com/opencontainers/go-digest
 # github.com/opencontainers/image-spec v1.0.1
-## explicit
 github.com/opencontainers/image-spec/specs-go
 github.com/opencontainers/image-spec/specs-go/v1
 # github.com/pkg/errors v0.9.1
@@ -191,12 +177,9 @@ golang.org/x/net/proxy
 golang.org/x/sys/cpu
 golang.org/x/sys/unix
 golang.org/x/sys/windows
-# golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e
-## explicit
-# google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
+# google.golang.org/genproto v0.0.0-20201106154455-f9bfe239b0ba
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.33.2
-## explicit
 google.golang.org/grpc/codes
 google.golang.org/grpc/internal/status
 google.golang.org/grpc/status
@@ -235,5 +218,3 @@ google.golang.org/protobuf/types/known/emptypb
 google.golang.org/protobuf/types/known/timestamppb
 # gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 gopkg.in/yaml.v3
-# gotest.tools v1.4.0
-## explicit
