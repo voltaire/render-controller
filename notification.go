@@ -31,7 +31,7 @@ func (svc *server) handleNotification(ctx context.Context, event events.SNSEntit
 		Host:   svc.cfg.SourceBucketName,
 		Path:   key,
 	}
-	return svc.startRenderer(ctx, objecturi.String())
+	return svc.renderer.Render(ctx, objecturi.String())
 }
 
 func extractS3Event(event events.SNSEntity) (events.S3Event, error) {

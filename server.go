@@ -27,7 +27,7 @@ type server struct {
 	sns      snsiface.SNSAPI
 	s3       s3iface.S3API
 	renderer *renderer.Service
-	cfg      Config
+	cfg      renderer.Config
 
 	githubActionsPublicKey ed25519.PublicKey
 }
@@ -65,18 +65,6 @@ func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
 			latestObj = obj
 		}
 	}
-	var alreadyRunning bool
-	alreadyRunning, err = svc.checkForAlreadyRunningContainer(ctx)
-	if err != nil {
-		log.Printf("error checking for running container: %s", err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-	if alreadyRunning {
-		log.Println("previous render container still running, skipping this run")
-		http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
-		return
-	}
 
 	objecturi := url.URL{
 		Scheme: "s3",
@@ -84,8 +72,14 @@ func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
 		Path:   aws.StringValue(latestObj.Key),
 	}
 	log.Println("starting render run for: " + objecturi.String())
-	err = svc.startRenderer(ctx, objecturi.String())
+	err = svc.renderer.Render(ctx, objecturi.String())
 	if err != nil {
+		if err == renderer.ErrAlreadyRunningRender {
+			log.Println("previous render container still running, skipping this run")
+			http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+			return
+		}
+
 		log.Printf("error starting renderer: %s", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -115,20 +109,14 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var alreadyRunning bool
-		alreadyRunning, err = svc.checkForAlreadyRunningContainer(ctx)
-		if err != nil {
-			log.Printf("error checking for running container: %s", err.Error())
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
-		if alreadyRunning {
-			log.Println("previous render container still running, skipping this run")
-			http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
-			return
-		}
-
 		err = svc.handleNotification(r.Context(), event)
+		if err != nil {
+			if err == renderer.ErrAlreadyRunningRender {
+				log.Println("previous render container still running, skipping this run")
+				http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+				return
+			}
+		}
 	case "SubscriptionConfirmation":
 		var msg subscriptionConfirmation
 		err = json.Unmarshal(bs, &msg)
@@ -176,5 +164,5 @@ func (svc *server) start() {
 			log.Printf("error writing healthcheck response: %s", err.Error())
 		}
 	})
-	log.Fatal(http.ListenAndServe(svc.cfg.Listen, mux))
+	log.Fatal(http.ListenAndServe(":80", mux))
 }

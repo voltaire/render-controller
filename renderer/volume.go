@@ -6,10 +6,11 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/volume"
+	"github.com/voltaire/render-controller/provider"
 )
 
-func (svc *Service) GetOrCreateVolume(ctx context.Context, world string) (*types.Volume, error) {
-	output, err := svc.Docker.VolumeList(ctx, filters.NewArgs(filters.KeyValuePair{
+func (svc *Service) getOrCreateVolume(ctx context.Context, instance provider.RendererInstance, world string) (*types.Volume, error) {
+	output, err := instance.VolumeList(ctx, filters.NewArgs(filters.KeyValuePair{
 		Key:   "label",
 		Value: "WorldName=" + world,
 	}, filters.KeyValuePair{
@@ -23,7 +24,7 @@ func (svc *Service) GetOrCreateVolume(ctx context.Context, world string) (*types
 		return output.Volumes[0], nil
 	}
 
-	vol, err := svc.Docker.VolumeCreate(ctx, volume.VolumeCreateBody{
+	vol, err := instance.VolumeCreate(ctx, volume.VolumeCreateBody{
 		Labels: map[string]string{
 			"WorldName": world,
 			"Service":   "Renderer",

@@ -10,35 +10,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/docker/docker/client"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/voltaire/render-controller/provider/generic"
 	"github.com/voltaire/render-controller/renderer"
 )
-
-type Config struct {
-	Listen string `default:":8080"`
-
-	AWSRegion          string `split_words:"true" default:"us-west-2"`
-	AWSAccessKeyId     string `split_words:"true" required:"true"`
-	AWSSecretAccessKey string `split_words:"true" required:"true"`
-
-	SourceBucketName       string `default:"mc.sep.gg-backups"`
-	SourceBucketAccountId  string `default:"006851364659"`
-	SourceBucketPathPrefix string `default:"newworld"`
-
-	DestinationBucketURI       string `split_words:"true" default:"s3://map-tonkat-su/"`
-	DestinationBucketEndpoint  string `split_words:"true"`
-	DestinationAccessKeyId     string `split_words:"true"`
-	DestinationSecretAccessKey string `split_words:"true"`
-
-	OverworldName     string `envconfig:"OVERWORLD_DIR" default:"pumpcraft"`
-	NetherName        string `envconfig:"NETHER_DIR" default:"pumpcraft_nether"`
-	TheEndName        string `envconfig:"THE_END_DIR" default:"pumpcraft_the_end"`
-	RendererImage     string `default:"ghcr.io/voltaire/renderer:latest"`
-	DiscordWebhookUrl string `split_words:"true"`
-
-	RunnerName string `split_words:"true" default:"renderer"`
-
-	GithubActionsPublicKey string `split_words:"true" required:"true"`
-}
 
 func decodePublicKey(encoded string) (key ed25519.PublicKey, err error) {
 	data, err := base64.StdEncoding.DecodeString(encoded)
@@ -49,7 +23,7 @@ func decodePublicKey(encoded string) (key ed25519.PublicKey, err error) {
 }
 
 func main() {
-	var cfg Config
+	var cfg renderer.Config
 	err := envconfig.Process("", &cfg)
 	if err != nil {
 		log.Fatal(err)
@@ -71,7 +45,10 @@ func main() {
 		s3:                     s3.New(sess),
 		docker:                 docker,
 		githubActionsPublicKey: githubActionsPublicKey,
-		renderer:               &renderer.Service{Docker: docker},
+		renderer: &renderer.Service{
+			Config:           cfg,
+			RendererProvider: &generic.Provider{Docker: docker},
+		},
 	}
 
 	server.start()
