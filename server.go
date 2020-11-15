@@ -19,13 +19,15 @@ import (
 	"github.com/aws/aws-sdk-go/service/sns/snsiface"
 	update_docker_image "github.com/bsdlp/update-docker-image"
 	"github.com/docker/docker/client"
+	"github.com/voltaire/render-controller/renderer"
 )
 
 type server struct {
-	docker client.APIClient
-	sns    snsiface.SNSAPI
-	s3     s3iface.S3API
-	cfg    Config
+	docker   client.APIClient
+	sns      snsiface.SNSAPI
+	s3       s3iface.S3API
+	renderer *renderer.Service
+	cfg      Config
 
 	githubActionsPublicKey ed25519.PublicKey
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/docker/docker/client"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/voltaire/render-controller/renderer"
 )
 
 type Config struct {
@@ -70,6 +71,7 @@ func main() {
 		s3:                     s3.New(sess),
 		docker:                 docker,
 		githubActionsPublicKey: githubActionsPublicKey,
+		renderer:               &renderer.Service{Docker: docker},
 	}
 
 	server.start()
