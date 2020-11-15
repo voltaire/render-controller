@@ -10,11 +10,11 @@ import (
 
 func (svc *Service) GetOrCreateVolume(ctx context.Context, world string) (*types.Volume, error) {
 	output, err := svc.Docker.VolumeList(ctx, filters.NewArgs(filters.KeyValuePair{
-		Key:   "label=WorldName",
-		Value: world,
+		Key:   "label",
+		Value: "WorldName=" + world,
 	}, filters.KeyValuePair{
-		Key:   "label=Service",
-		Value: "Renderer",
+		Key:   "label",
+		Value: "Service=Renderer",
 	}))
 	if err != nil {
 		return nil, err
