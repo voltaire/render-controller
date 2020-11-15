@@ -4,7 +4,7 @@
 }
 
 renderer.tonkat.su
-reverse_proxy controller:8080 {
+reverse_proxy controller:80 {
     health_path /health
     health_body ok
     health_status 200
