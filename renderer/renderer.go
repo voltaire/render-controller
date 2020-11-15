@@ -59,6 +59,7 @@ func (svc *Service) Render(ctx context.Context, backupTarballURI string) error {
 func checkForAlreadyRunningContainer(ctx context.Context, instance provider.RendererInstance, cfg Config) (bool, error) {
 	args := filters.NewArgs()
 	args.Add("label", "service=renderer")
+	args.Add("label", "function=renderer")
 	args.Add("label", "world="+cfg.OverworldName)
 	containers, err := instance.ContainerList(ctx, types.ContainerListOptions{
 		Filters: args,
@@ -84,8 +85,9 @@ func (svc *Service) startRenderer(ctx context.Context, instance provider.Rendere
 		Image: svc.Config.RendererImage,
 		Env:   buildContainerEnv(svc.Config, backupTarballURI),
 		Labels: map[string]string{
-			"service": "renderer",
-			"world":   svc.Config.OverworldName,
+			"service":  "renderer",
+			"world":    svc.Config.OverworldName,
+			"function": "renderer",
 		},
 	}, &container.HostConfig{
 		AutoRemove: true,
