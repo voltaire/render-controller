@@ -10,7 +10,6 @@ WORKDIR /root
 RUN unzip /root/docker-machine-driver-linode.zip
 
 FROM gcr.io/distroless/static
-EXPOSE 8080
 COPY --from=unzipper /root/docker-machine-driver-linode /usr/bin/docker-machine-driver-linode
 COPY --from=builder /bin/main /bin/main
 

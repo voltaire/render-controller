@@ -4,7 +4,7 @@ WORKDIR /src
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags='-extldflags=-static' -o /bin/main ./cmd/render-edge
 
 FROM gcr.io/distroless/static
-EXPOSE 8080
+EXPOSE 80
 COPY --from=builder /bin/main /bin/main
 
 ENTRYPOINT ["/bin/main"]
