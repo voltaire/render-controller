@@ -47,7 +47,7 @@ func main() {
 		githubActionsPublicKey: githubActionsPublicKey,
 		renderer: &renderer.Service{
 			Config:           cfg,
-			RendererProvider: &generic.Provider{Docker: docker},
+			RendererProvider: &generic.Provider{},
 		},
 	}
 

@@ -6,7 +6,7 @@ on:
     branches:
 name: build and push
 jobs:
-  pipeline:
+  edge:
     strategy:
       matrix:
         go-version: [1.15.5]
@@ -34,18 +34,20 @@ jobs:
         if: github.ref != 'refs/heads/main'
         uses: docker/build-push-action@v2
         with:
+          file: ./cmd/render-edge/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ github.event.pull_request.head.ref }}
+          tags: ghcr.io/${{ github.repository }}/edge:${{ github.event.pull_request.head.ref }}
       - name: docker build and push
         if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v2
         with:
+          file: ./cmd/render-edge/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/${{ github.repository }}/edge:latest
       - name: notify renderer
         if: github.ref == 'refs/heads/main'
         uses: bsdlp/notify-docker-pull@34767059efa90abbaf8cd04d68a3ea79be10857e
         with:
           server_url: "https://renderer.tonkat.su"
-          image: ghcr.io/${{ github.repository }}:latest
+          image: ghcr.io/${{ github.repository }}/edge:latest
           private_key: ${{ secrets.UPDATE_DOCKER_IMAGE_PRIVATE_KEY }}
