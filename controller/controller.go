@@ -28,7 +28,7 @@ func (ctrl *Controller) StartForRender(ctx context.Context, cfg renderer.Config,
 		LogConfig: container.LogConfig{
 			Type: "awslogs",
 			Config: map[string]string{
-				"awslogs-group":        "render-controller",
+				"awslogs-group":        "render-controller/controller",
 				"awslogs-create-group": "true",
 				"awslogs-region":       cfg.AwsRegion,
 			},

@@ -10,7 +10,7 @@ services:
     logging:
       driver: awslogs
       options:
-        awslogs-group: render-controller-edge
+        awslogs-group: render-controller/edge
         awslogs-create-group: "true"
         awslogs-region: "us-west-2"
     volumes:
@@ -34,7 +34,7 @@ services:
     logging:
       driver: awslogs
       options:
-        awslogs-group: render-controller-caddy
+        awslogs-group: render-controller/caddy
         awslogs-create-group: "true"
         awslogs-region: "us-west-2"
     ports:
