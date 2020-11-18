@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/sns"
 	"github.com/docker/docker/client"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/voltaire/render-controller/controller"
 	"github.com/voltaire/render-controller/renderer"
 )
 
@@ -44,6 +45,9 @@ func main() {
 		s3:                     s3.New(sess),
 		docker:                 docker,
 		githubActionsPublicKey: githubActionsPublicKey,
+		controller: &controller.Controller{
+			Docker: docker,
+		},
 	}
 
 	server.start()
