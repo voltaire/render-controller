@@ -16,7 +16,7 @@ type Controller struct {
 
 func (ctrl *Controller) StartForRender(ctx context.Context, cfg renderer.Config, backupTarballUri string) error {
 	container, err := ctrl.Docker.ContainerCreate(ctx, &container.Config{
-		Image: cfg.RendererImage,
+		Image: cfg.RenderControllerImage,
 		Env:   renderer.BuildContainerEnv(cfg, backupTarballUri),
 		Labels: map[string]string{
 			"service":  "renderer",

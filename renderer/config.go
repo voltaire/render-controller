@@ -14,11 +14,12 @@ type Config struct {
 	DestinationAccessKeyId     string `split_words:"true"`
 	DestinationSecretAccessKey string `split_words:"true"`
 
-	OverworldName     string `envconfig:"OVERWORLD_DIR" default:"pumpcraft"`
-	NetherName        string `envconfig:"NETHER_DIR" default:"pumpcraft_nether"`
-	TheEndName        string `envconfig:"THE_END_DIR" default:"pumpcraft_the_end"`
-	RendererImage     string `default:"ghcr.io/voltaire/renderer:latest"`
-	DiscordWebhookUrl string `split_words:"true"`
+	OverworldName         string `envconfig:"OVERWORLD_DIR" default:"pumpcraft"`
+	NetherName            string `envconfig:"NETHER_DIR" default:"pumpcraft_nether"`
+	TheEndName            string `envconfig:"THE_END_DIR" default:"pumpcraft_the_end"`
+	RendererImage         string `default:"ghcr.io/voltaire/renderer:latest"`
+	RenderControllerImage string `default:"ghcr.io/voltaire/render-controller/controller:latest"`
+	DiscordWebhookUrl     string `split_words:"true"`
 
 	RunnerName string `split_words:"true" default:"renderer"`
 
