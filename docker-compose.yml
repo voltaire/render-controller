@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  controller:
+  edge:
     image: ghcr.io/voltaire/render-controller/edge:latest
     depends_on:
       - controller-redis
@@ -29,7 +29,7 @@ services:
     build:
       context: ./caddy
     depends_on:
-      - controller
+      - edge
     restart: unless-stopped
     logging:
       driver: awslogs
