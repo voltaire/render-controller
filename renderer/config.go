@@ -23,7 +23,7 @@ type Config struct {
 
 	RunnerName string `split_words:"true" default:"renderer"`
 
-	GithubActionsPublicKey string `split_words:"true" required:"true"`
+	GithubActionsPublicKey string `split_words:"true"`
 
 	BackupTarballUri string `split_words:"true"`
 }
