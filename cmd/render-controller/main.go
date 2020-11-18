@@ -16,11 +16,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Println("rendering using generic provider")
 	renderer := &renderer.Service{
 		Config:           cfg,
 		RendererProvider: &generic.Provider{},
 	}
 
+	log.Printf("starting render run for tarball '%s'", cfg.BackupTarballUri)
 	err = renderer.Render(context.TODO(), cfg.BackupTarballUri)
 	if err != nil {
 		log.Fatal(err)

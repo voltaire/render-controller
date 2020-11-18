@@ -26,6 +26,7 @@ func (svc *Service) Render(ctx context.Context, backupTarballURI string) error {
 		return err
 	}
 
+	log.Println("checking for running container instance")
 	alreadyRunning, err := checkForAlreadyRunningContainer(ctx, instance, svc.Config)
 	if err != nil {
 		return err
@@ -35,6 +36,7 @@ func (svc *Service) Render(ctx context.Context, backupTarballURI string) error {
 		return ErrAlreadyRunningRender
 	}
 
+	log.Println("starting renderer")
 	return svc.startRenderer(ctx, instance, backupTarballURI)
 }
 
