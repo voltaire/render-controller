@@ -5,6 +5,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
 	"github.com/voltaire/render-controller/renderer"
@@ -31,6 +32,13 @@ func (ctrl *Controller) StartForRender(ctx context.Context, cfg renderer.Config,
 				"awslogs-group":        "render-controller/controller",
 				"awslogs-create-group": "true",
 				"awslogs-region":       cfg.AwsRegion,
+			},
+		},
+		Mounts: []mount.Mount{
+			{
+				Type:   mount.TypeBind,
+				Source: "/var/run/docker.sock",
+				Target: "/var/run/docker.sock",
 			},
 		},
 	}, &network.NetworkingConfig{}, "")
