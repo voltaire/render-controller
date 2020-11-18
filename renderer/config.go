@@ -23,4 +23,24 @@ type Config struct {
 	RunnerName string `split_words:"true" default:"renderer"`
 
 	GithubActionsPublicKey string `split_words:"true" required:"true"`
+
+	BackupTarballUri string `split_words:"true"`
+}
+
+func BuildContainerEnv(cfg Config, backupTarballURI string) []string {
+	return []string{
+		"AWS_REGION=" + cfg.AwsRegion,
+		"AWS_ACCESS_KEY_ID=" + cfg.AwsAccessKeyId,
+		"AWS_SECRET_ACCESS_KEY=" + cfg.AwsSecretAccessKey,
+		"OVERWORLD_DIR=" + cfg.OverworldName,
+		"NETHER_DIR=" + cfg.NetherName,
+		"THE_END_DIR=" + cfg.TheEndName,
+		"BACKUP_TARBALL_URI=" + backupTarballURI,
+		"DESTINATION_BUCKET_URI=" + cfg.DestinationBucketURI,
+		"DESTINATION_BUCKET_ENDPOINT=" + cfg.DestinationBucketEndpoint,
+		"DESTINATION_ACCESS_KEY_ID=" + cfg.DestinationAccessKeyId,
+		"DESTINATION_SECRET_ACCESS_KEY=" + cfg.DestinationSecretAccessKey,
+		"DISCORD_WEBHOOK_URL=" + cfg.DiscordWebhookUrl,
+		"RUNNER_NAME=" + cfg.RunnerName,
+	}
 }

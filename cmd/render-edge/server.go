@@ -19,15 +19,17 @@ import (
 	"github.com/aws/aws-sdk-go/service/sns/snsiface"
 	update_docker_image "github.com/bsdlp/update-docker-image"
 	"github.com/docker/docker/client"
+	"github.com/voltaire/render-controller/controller"
 	"github.com/voltaire/render-controller/renderer"
 )
 
 type server struct {
-	docker   client.APIClient
-	sns      snsiface.SNSAPI
-	s3       s3iface.S3API
-	renderer *renderer.Service
-	cfg      renderer.Config
+	docker client.APIClient
+	sns    snsiface.SNSAPI
+	s3     s3iface.S3API
+	cfg    renderer.Config
+
+	controller *controller.Controller
 
 	githubActionsPublicKey ed25519.PublicKey
 }
@@ -72,15 +74,9 @@ func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
 		Path:   aws.StringValue(latestObj.Key),
 	}
 	log.Println("starting render run for: " + objecturi.String())
-	err = svc.renderer.Render(ctx, objecturi.String())
+	err = svc.controller.StartForRender(ctx, svc.cfg, objecturi.String())
 	if err != nil {
-		if err == renderer.ErrAlreadyRunningRender {
-			log.Println("previous render container still running, skipping this run")
-			http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
-			return
-		}
-
-		log.Printf("error starting renderer: %s", err.Error())
+		log.Printf("error starting render-controller: %s", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -110,13 +106,6 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = svc.handleNotification(r.Context(), event)
-		if err != nil {
-			if err == renderer.ErrAlreadyRunningRender {
-				log.Println("previous render container still running, skipping this run")
-				http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
-				return
-			}
-		}
 	case "SubscriptionConfirmation":
 		var msg subscriptionConfirmation
 		err = json.Unmarshal(bs, &msg)
