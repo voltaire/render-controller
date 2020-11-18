@@ -4,7 +4,7 @@ on:
       - main
   pull_request:
     branches:
-name: build and push
+name: 'controller: build and push'
 jobs:
   controller:
     strategy:
