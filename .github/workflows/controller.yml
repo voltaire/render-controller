@@ -34,7 +34,7 @@ jobs:
         if: github.ref != 'refs/heads/main'
         uses: docker/build-push-action@v2
         with:
-          file: ./cmd/render-edge/Dockerfile
+          file: ./cmd/render-controller/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/controller:${{ github.event.pull_request.head.ref }}
       - name: docker build and push
