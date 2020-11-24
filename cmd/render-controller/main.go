@@ -5,8 +5,9 @@ import (
 	"log"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/voltaire/render-controller/provider/generic"
+	"github.com/voltaire/render-controller/provider/linode"
 	"github.com/voltaire/render-controller/renderer"
+	"github.com/voltaire/render-controller/renderer/events"
 )
 
 func main() {
@@ -16,15 +17,33 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Println("rendering using generic provider")
-	renderer := &renderer.Service{
-		Config:           cfg,
-		RendererProvider: &generic.Provider{},
-	}
-
-	log.Printf("starting render run for tarball '%s'", cfg.BackupTarballUri)
-	err = renderer.Render(context.TODO(), cfg.BackupTarballUri)
+	var providerCfg linode.Config
+	err = envconfig.Process("LINODE", &providerCfg)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	log.Println("rendering using linode provider")
+	provider, err := linode.New(&providerCfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctx := context.Background()
+	instance, err := provider.GetRendererInstance(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	renderer := &renderer.Service{
+		Config: cfg,
+	}
+
+	log.Printf("starting render run for tarball '%s'", cfg.BackupTarballUri)
+	err = renderer.Render(context.TODO(), instance, cfg.BackupTarballUri)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	events.HandleContainerEvents(instance, cfg)
 }

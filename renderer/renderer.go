@@ -14,18 +14,12 @@ import (
 )
 
 type Service struct {
-	Config           Config
-	RendererProvider provider.Renderer
+	Config Config
 }
 
 var ErrAlreadyRunningRender = errors.New("renderer: a render is already running")
 
-func (svc *Service) Render(ctx context.Context, backupTarballURI string) error {
-	instance, err := svc.RendererProvider.GetRendererInstance(ctx)
-	if err != nil {
-		return err
-	}
-
+func (svc *Service) Render(ctx context.Context, instance provider.RendererInstance, backupTarballURI string) error {
 	log.Println("checking for running container instance")
 	alreadyRunning, err := checkForAlreadyRunningContainer(ctx, instance, svc.Config)
 	if err != nil {
