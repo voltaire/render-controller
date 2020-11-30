@@ -1,5 +1,7 @@
 package renderer
 
+import "strings"
+
 type Config struct {
 	AwsRegion          string `split_words:"true" default:"us-west-2"`
 	AwsAccessKeyId     string `split_words:"true" required:"true"`
@@ -22,14 +24,11 @@ type Config struct {
 	DiscordWebhookUrl     string `split_words:"true"`
 
 	RunnerName string `split_words:"true" default:"renderer"`
-
-	GithubActionsPublicKey string `split_words:"true"`
-
-	BackupTarballUri string `split_words:"true"`
 }
 
-func BuildContainerEnv(cfg Config, backupTarballURI string) []string {
-	return []string{
+func (cfg *Config) BuildEnvironment(prefix string, backupTarballURI string) []string {
+	prefix = strings.ToUpper(prefix)
+	env := []string{
 		"AWS_REGION=" + cfg.AwsRegion,
 		"AWS_ACCESS_KEY_ID=" + cfg.AwsAccessKeyId,
 		"AWS_SECRET_ACCESS_KEY=" + cfg.AwsSecretAccessKey,
@@ -44,4 +43,10 @@ func BuildContainerEnv(cfg Config, backupTarballURI string) []string {
 		"DISCORD_WEBHOOK_URL=" + cfg.DiscordWebhookUrl,
 		"RUNNER_NAME=" + cfg.RunnerName,
 	}
+	if prefix != "" {
+		for i, v := range env {
+			env[i] = prefix + "_" + v
+		}
+	}
+	return env
 }

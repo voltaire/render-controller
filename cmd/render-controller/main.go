@@ -10,18 +10,19 @@ import (
 	"github.com/voltaire/render-controller/renderer/events"
 )
 
+type config struct {
+	BackupTarballURI string `evconfig:"BACKUP_TARBALL_URI" required:"true"`
+}
+
 func main() {
-	var cfg renderer.Config
-	err := envconfig.Process("", &cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
+	var cfg config
+	envconfig.MustProcess("", &cfg)
+
+	var rendererConfig renderer.Config
+	envconfig.MustProcess("renderer", &rendererConfig)
 
 	var providerCfg linode.Config
-	err = envconfig.Process("LINODE", &providerCfg)
-	if err != nil {
-		log.Fatal(err)
-	}
+	envconfig.MustProcess("LINODE", &providerCfg)
 
 	log.Println("rendering using linode provider")
 	provider, err := linode.New(&providerCfg)
@@ -36,14 +37,14 @@ func main() {
 	}
 
 	renderer := &renderer.Service{
-		Config: cfg,
+		Config: rendererConfig,
 	}
 
-	log.Printf("starting render run for tarball '%s'", cfg.BackupTarballUri)
-	err = renderer.Render(context.TODO(), instance, cfg.BackupTarballUri)
+	log.Printf("starting render run for tarball '%s'", cfg.BackupTarballURI)
+	err = renderer.Render(context.TODO(), instance, cfg.BackupTarballURI)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	events.HandleContainerEvents(instance, cfg)
+	events.HandleContainerEvents(instance, rendererConfig)
 }

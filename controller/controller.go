@@ -18,7 +18,7 @@ type Client struct {
 func (ctrl *Client) StartForRender(ctx context.Context, cfg renderer.Config, backupTarballUri string) error {
 	container, err := ctrl.Docker.ContainerCreate(ctx, &container.Config{
 		Image: cfg.RenderControllerImage,
-		Env:   renderer.BuildContainerEnv(cfg, backupTarballUri),
+		Env:   cfg.BuildEnvironment("renderer", backupTarballUri),
 		Labels: map[string]string{
 			"service":  "renderer",
 			"world":    cfg.OverworldName,

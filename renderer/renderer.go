@@ -61,7 +61,7 @@ func (svc *Service) startRenderer(ctx context.Context, instance provider.Rendere
 	log.Printf("creating container to render '%s' using image '%s'", backupTarballURI, svc.Config.RendererImage)
 	container, err := instance.ContainerCreate(ctx, &container.Config{
 		Image: svc.Config.RendererImage,
-		Env:   BuildContainerEnv(svc.Config, backupTarballURI),
+		Env:   svc.Config.BuildEnvironment("", backupTarballURI),
 		Labels: map[string]string{
 			"service":  "renderer",
 			"world":    svc.Config.OverworldName,

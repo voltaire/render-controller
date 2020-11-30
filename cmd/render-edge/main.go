@@ -22,9 +22,19 @@ func decodePublicKey(encoded string) (key ed25519.PublicKey, err error) {
 	return ed25519.PublicKey(data), nil
 }
 
+type config struct {
+	GithubActionsPublicKey string `required:"true" split_words:"true"`
+}
+
 func main() {
-	var cfg renderer.Config
+	var cfg config
 	err := envconfig.Process("", &cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var rendererConfig renderer.Config
+	err = envconfig.Process("renderer", &rendererConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,7 +50,7 @@ func main() {
 	}
 	sess := session.Must(session.NewSession())
 	server := &server{
-		cfg:                    cfg,
+		cfg:                    rendererConfig,
 		sns:                    sns.New(sess),
 		s3:                     s3.New(sess),
 		docker:                 docker,
