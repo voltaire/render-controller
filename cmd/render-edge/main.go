@@ -45,7 +45,7 @@ func main() {
 		s3:                     s3.New(sess),
 		docker:                 docker,
 		githubActionsPublicKey: githubActionsPublicKey,
-		controller: &controller.Controller{
+		controllerClient: &controller.Client{
 			Docker: docker,
 		},
 	}

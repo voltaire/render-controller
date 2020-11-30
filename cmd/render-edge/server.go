@@ -29,7 +29,7 @@ type server struct {
 	s3     s3iface.S3API
 	cfg    renderer.Config
 
-	controller *controller.Controller
+	controllerClient *controller.Client
 
 	githubActionsPublicKey ed25519.PublicKey
 }
@@ -74,7 +74,7 @@ func (svc *server) renderLatestMap(w http.ResponseWriter, r *http.Request) {
 		Path:   aws.StringValue(latestObj.Key),
 	}
 	log.Println("starting render run for: " + objecturi.String())
-	err = svc.controller.StartForRender(ctx, svc.cfg, objecturi.String())
+	err = svc.controllerClient.StartForRender(ctx, svc.cfg, objecturi.String())
 	if err != nil {
 		log.Printf("error starting render-controller: %s", err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

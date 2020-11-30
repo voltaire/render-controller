@@ -11,11 +11,11 @@ import (
 	"github.com/voltaire/render-controller/renderer"
 )
 
-type Controller struct {
+type Client struct {
 	Docker *client.Client
 }
 
-func (ctrl *Controller) StartForRender(ctx context.Context, cfg renderer.Config, backupTarballUri string) error {
+func (ctrl *Client) StartForRender(ctx context.Context, cfg renderer.Config, backupTarballUri string) error {
 	container, err := ctrl.Docker.ContainerCreate(ctx, &container.Config{
 		Image: cfg.RenderControllerImage,
 		Env:   renderer.BuildContainerEnv(cfg, backupTarballUri),
