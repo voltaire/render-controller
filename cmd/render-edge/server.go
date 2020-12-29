@@ -21,6 +21,7 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/voltaire/render-controller/controller"
 	"github.com/voltaire/render-controller/renderer"
+	"golang.org/x/sync/errgroup"
 )
 
 type server struct {
@@ -141,7 +142,27 @@ func (svc *server) handleSNSMessage(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func (svc *server) ensureDockerImages(ctx context.Context) error {
+	group, ctx := errgroup.WithContext(ctx)
+	for _, img := range []string{
+		svc.cfg.RendererImage,
+		svc.cfg.RenderControllerImage,
+	} {
+		group.Go(func() error {
+			return svc.pullDockerImage(ctx, img)
+		})
+	}
+	return group.Wait()
+}
+
 func (svc *server) start() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	err := svc.ensureDockerImages(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	cancel()
+
 	mux := http.NewServeMux()
 	updateImageHandler := update_docker_image.NewUpdateDockerImageServer(svc)
 	mux.Handle(updateImageHandler.PathPrefix(), updateImageHandler)

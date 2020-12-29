@@ -14,6 +14,7 @@ require (
 	github.com/sirupsen/logrus v1.7.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	github.com/twitchtv/twirp v7.1.0+incompatible
+	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
 )
 
 replace github.com/docker/machine v0.16.2 => github.com/bsdlp/machine v0.7.1-0.20201114195251-29ab5be05b0c
