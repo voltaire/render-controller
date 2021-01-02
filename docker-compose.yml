@@ -2,8 +2,6 @@ version: "3.8"
 services:
   edge:
     image: ghcr.io/voltaire/render-controller/edge:latest
-    depends_on:
-      - controller-redis
     restart: unless-stopped
     init: true
     env_file: ./prod.env
@@ -15,16 +13,6 @@ services:
         awslogs-region: "us-west-2"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-  controller-redis:
-    image: redis:6-alpine
-    restart: unless-stopped
-    command: redis-server --appendonly yes
-    volumes:
-      - type: volume
-        source: redis_data
-        target: /data
-        volume:
-          nocopy: true
   caddy:
     build:
       context: ./caddy
@@ -47,4 +35,3 @@ services:
 volumes:
   caddy_data:
   caddy_config:
-  redis_data:
