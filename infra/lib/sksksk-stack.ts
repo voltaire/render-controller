@@ -1,4 +1,6 @@
 import * as assets from '@aws-cdk/aws-s3-assets';
+import * as events from '@aws-cdk/aws-events';
+import * as events_targets from '@aws-cdk/aws-events-targets';
 import * as iam from '@aws-cdk/aws-iam';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as logs from '@aws-cdk/aws-logs';
@@ -102,5 +104,10 @@ export class SkskskStack extends cdk.Stack {
     })
 
     dataBucket.grantReadWrite(updateMapCertLambda)
+
+    new events.Rule(this, 'mapCertCron', {
+      schedule: events.Schedule.rate(cdk.Duration.days(7)),
+      targets: [new events_targets.LambdaFunction(updateMapCertLambda)],
+    })
   }
 }
