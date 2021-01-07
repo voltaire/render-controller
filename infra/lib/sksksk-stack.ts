@@ -1,8 +1,9 @@
-import iam = require('@aws-cdk/aws-iam');
-import route53 = require('@aws-cdk/aws-route53');
-import s3 = require('@aws-cdk/aws-s3');
-import sns = require('@aws-cdk/aws-sns');
-import subscriptions = require('@aws-cdk/aws-sns-subscriptions');
+import * as iam from '@aws-cdk/aws-iam';
+import * as route53 from '@aws-cdk/aws-route53';
+import * as s3 from '@aws-cdk/aws-s3';
+import * as sns from '@aws-cdk/aws-sns';
+import * as subscriptions from '@aws-cdk/aws-sns-subscriptions';
+import * as path from 'path';
 import * as cdk from '@aws-cdk/core';
 
 export class SkskskStack extends cdk.Stack {
