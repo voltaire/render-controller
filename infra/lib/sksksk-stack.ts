@@ -101,6 +101,10 @@ export class SkskskStack extends cdk.Stack {
       runtime: lambda.Runtime.GO_1_X,
       handler: 'update-map-cert',
       logRetention: logs.RetentionDays.THREE_DAYS,
+      environment: {
+        DATA_BUCKET_NAME: dataBucket.bucketName,
+        RENEW_IF_WITHIN: '336h', // 14 days
+      },
     })
 
     dataBucket.grantReadWrite(updateMapCertLambda)
