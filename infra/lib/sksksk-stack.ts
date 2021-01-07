@@ -1,4 +1,7 @@
+import * as assets from '@aws-cdk/aws-s3-assets';
 import * as iam from '@aws-cdk/aws-iam';
+import * as lambda from '@aws-cdk/aws-lambda';
+import * as logs from '@aws-cdk/aws-logs';
 import * as route53 from '@aws-cdk/aws-route53';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as sns from '@aws-cdk/aws-sns';
@@ -78,5 +81,26 @@ export class SkskskStack extends cdk.Stack {
     })
 
     backupNotificationTopic.addSubscription(new subscriptions.UrlSubscription('https://'+rendererRecord.domainName+'/callback', {protocol: sns.SubscriptionProtocol.HTTPS}))
+
+    const dataBucket = new s3.Bucket(this, 'dataBucket', {
+      accessControl: s3.BucketAccessControl.PRIVATE,
+      autoDeleteObjects: true,
+    })
+
+    const lambdasAsset = new assets.Asset(this, 'lambdasZip', {
+      path: path.join(__dirname, '../../build/'),
+    })
+
+    const updateMapCertLambda = new lambda.Function(this, 'updateMapCertLambda', {
+      code: lambda.Code.fromBucket(
+        lambdasAsset.bucket,
+        lambdasAsset.s3ObjectKey,
+      ),
+      runtime: lambda.Runtime.GO_1_X,
+      handler: 'update-map-cert',
+      logRetention: logs.RetentionDays.THREE_DAYS,
+    })
+
+    dataBucket.grantReadWrite(updateMapCertLambda)
   }
 }
