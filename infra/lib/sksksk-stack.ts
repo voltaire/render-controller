@@ -70,12 +70,6 @@ export class SkskskStack extends cdk.Stack {
       domainName: 'oldmap.tonkat.su.website-us-east-1.linodeobjects.com',
     })
 
-    new route53.CnameRecord(this, 'bungeeCord', {
-      zone: tonkatsuZone,
-      recordName: 'mc',
-      domainName: 'mc.sep.gg',
-    })
-
     const rendererRecord = new route53.ARecord(this, 'renderer', {
       zone: tonkatsuZone,
       recordName: 'renderer',
