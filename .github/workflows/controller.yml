@@ -9,7 +9,7 @@ jobs:
   controller:
     strategy:
       matrix:
-        go-version: [1.15.6]
+        go-version: [1.16]
     runs-on: ubuntu-latest
     steps:
       - name: install go
